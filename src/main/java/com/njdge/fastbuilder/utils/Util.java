@@ -54,7 +54,7 @@ public class Util {
     public static String renderTimeTaken(Long previousTime, Long time) {
         if (previousTime == null) {
             return CC.GREEN + formatTime(time);
-        }else {
+        } else {
             long timeTaken = time - previousTime;
             String timeTakenStr;
             if (timeTaken < 0) {
@@ -63,39 +63,11 @@ public class Util {
                 timeTakenStr = CC.GREEN + "+" + formatTime(timeTaken);
             }
 
-            return renderPreviousBest(time,previousTime) + " " + CC.GRAY + CC.translate("&l|| ") + timeTakenStr ;
+            return renderPreviousBest(time, previousTime) + " " + CC.GRAY + CC.translate("&l|| ") + timeTakenStr;
 
         }
     }
 
-    public static int emeraldsFactory(int z, ArenaType type, boolean pb) {
-        int result;
-        switch (type) {
-            case NORMAL:
-                result = pb ? 40 : (int) Math.ceil((z / 1000.0) * 0.25);
-                break;
-            case SHORT:
-                result = pb ? 16 : (int) Math.ceil((z / 1000.0) * 0.5);
-                break;
-            case INCLINED_SHORT:
-                result = pb ? 12 : (int) Math.ceil((z / 1000.0) * 0.375);
-                break;
-            default:
-                result = 0;
-        }
-        return Math.min(result, pb ? getPbValue(type) : result);
-    }
 
-    private static int getPbValue(ArenaType type) {
-        switch (type) {
-            case NORMAL:
-                return 40;
-            case SHORT:
-                return 16;
-            case INCLINED_SHORT:
-                return 12;
-            default:
-                return 0;
-        }
-    }
+
 }

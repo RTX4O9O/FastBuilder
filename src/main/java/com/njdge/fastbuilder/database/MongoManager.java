@@ -20,8 +20,10 @@ public class MongoManager {
 
     public MongoManager(FastBuilder plugin) {
         this.plugin = plugin;
-        this.init();
         this.enabled = plugin.getConfigFile().getConfiguration().getBoolean("mongo.enabled");
+        if (this.enabled) {
+            this.init();
+        }
     }
 
     public void init() {

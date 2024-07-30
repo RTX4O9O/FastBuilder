@@ -32,6 +32,7 @@ public class PlayerProfile {
     private Long time,pb;
     private int blocks;
     private TimerTicker timer;
+    private int emeralds;
 
 
     public PlayerProfile(UUID uuid) {
@@ -81,16 +82,27 @@ public class PlayerProfile {
         }
         this.timer.stop();
     }
+    public void addEmerald(int amount) {
+        this.emeralds += amount;
+    }
+    public void removeEmerald(int amount) {
+        this.emeralds -= amount;
+    }
+    public void clearEmerald() {
+        this.emeralds = 0;
+    }
 
     public Document toDoc() {
         Document doc = new Document()
                 .append("uuid", uuid.toString())
                 .append("name", name)
+                .append("emeralds", emeralds)
                 .append("blockType", blockType.name())
                 .append("pickaxeType", pickaxeType.name())
                 .append("pb", pb)
                 .append("time", time)
                 .append("blocks", blocks);
+
         return doc;
     }
 }

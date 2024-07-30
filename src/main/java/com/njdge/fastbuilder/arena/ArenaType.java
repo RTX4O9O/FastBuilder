@@ -7,6 +7,7 @@ import lombok.Getter;
 public enum ArenaType {
     NORMAL(55, 6),
     SHORT(33,3),
+    EXTRA_SHORT(21, 1),
     INCLINED_SHORT(23,3);
 
     private int length; //spawn point to finish line

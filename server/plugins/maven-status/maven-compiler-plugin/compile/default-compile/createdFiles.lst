@@ -21,6 +21,7 @@ com\njdge\fastbuilder\utils\menu\button\ConfirmationButton.class
 com\njdge\fastbuilder\WeatherManager$1.class
 com\njdge\fastbuilder\utils\assemble\AssembleBoardEntry.class
 com\njdge\fastbuilder\utils\assemble\AssembleStyle.class
+com\njdge\fastbuilder\profile\listener\ProfileListener$1.class
 com\njdge\fastbuilder\utils\assemble\AssembleException.class
 com\njdge\fastbuilder\utils\menu\Button.class
 com\njdge\fastbuilder\utils\TitleSender.class
@@ -45,7 +46,6 @@ com\njdge\fastbuilder\utils\menu\pagination\JumpToPageButton.class
 com\njdge\fastbuilder\utils\menu\button\ToggleButton.class
 com\njdge\fastbuilder\profile\command\EditCommand.class
 com\njdge\fastbuilder\utils\TaskTicker.class
-com\njdge\fastbuilder\utils\Util$1.class
 com\njdge\fastbuilder\utils\assemble\AssembleAdapter.class
 com\njdge\fastbuilder\utils\Cuboid.class
 com\njdge\fastbuilder\profile\shop\menu\ShopMenu.class

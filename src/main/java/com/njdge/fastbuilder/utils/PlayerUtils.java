@@ -206,11 +206,6 @@ public class PlayerUtils {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.spigot().setCollidesWithEntities(true);
 
-
-        //Since Player#sendTitle only reset the title, not subtitle, so we do some tricky stuff here
-        TitleSender.sendTitle(player, "&r", PacketPlayOutTitle.EnumTitleAction.TITLE, 1, 10, 1);
-        TitleSender.sendTitle(player, "&r", PacketPlayOutTitle.EnumTitleAction.SUBTITLE, 1, 10, 1);
-
         if (resetHeldSlot) {
             player.getInventory().setHeldItemSlot(0);
         }

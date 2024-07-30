@@ -15,13 +15,15 @@ import java.util.UUID;
 public class ProfileManager {
     private HashMap<UUID, PlayerProfile> profiles;
     private FastBuilder plugin;
-    private final MongoDatabase database;
+    private MongoDatabase database;
 
     public ProfileManager(FastBuilder plugin) {
         profiles = new HashMap<>();
         this.plugin = plugin;
-        this.database = plugin.getMongoManager().getDatabase();
-        createCollection();
+        if (plugin.isMongoEnabled()) {
+            this.database = plugin.getMongoManager().getDatabase();
+            createCollection();
+        }
     }
 
     public PlayerProfile login(String name, UUID uuid) {
@@ -51,12 +53,13 @@ public class ProfileManager {
         profile.setBlockType(Material.SANDSTONE);
         profile.setPickaxeType(Material.WOOD_PICKAXE);
         profile.setPb(null);
+        profile.setEmeralds(0);
         database.getCollection("fastbuilder_profiles").insertOne(new Document(profile.toDoc()));
     }
 
     public void load(PlayerProfile profile) {
         UUID uuid = profile.getUuid();
-        if (plugin.getMongoManager().isEnabled()) {
+        if (plugin.isMongoEnabled()) {
                 Document document = database.getCollection("fastbuilder_profiles").find(Filters.eq("uuid", uuid.toString())).first();
                 importFromBson(document, profile);
         }else {
@@ -65,17 +68,19 @@ public class ProfileManager {
             profile.setBlockType(Material.valueOf(plugin.getProfileConfig().getConfiguration().getString(profile.getUuid().toString() + ".blockType")));
             profile.setPickaxeType(Material.valueOf(plugin.getProfileConfig().getConfiguration().getString(profile.getUuid().toString() + ".pickaxeType")));
             profile.setPb(plugin.getProfileConfig().getConfiguration().getLong(profile.getUuid().toString() + ".pb"));
+            profile.setEmeralds(plugin.getProfileConfig().getConfiguration().getInt(profile.getUuid().toString() + ".emeralds"));
         }
     }
 
     public void save(PlayerProfile profile) {
-        if (plugin.getMongoManager().isEnabled()) {
+        if (plugin.isMongoEnabled()) {
             database.getCollection("fastbuilder_profiles").replaceOne(Filters.eq("uuid", profile.getUuid().toString()), profile.toDoc());
         }else {
             plugin.getProfileConfig().getConfiguration().set(profile.getUuid().toString() + ".name", profile.getName());
             plugin.getProfileConfig().getConfiguration().set(profile.getUuid().toString() + ".blockType", profile.getBlockType().name());
             plugin.getProfileConfig().getConfiguration().set(profile.getUuid().toString() + ".pickaxeType", profile.getPickaxeType().name());
             plugin.getProfileConfig().getConfiguration().set(profile.getUuid().toString() + ".pb", profile.getPb());
+            plugin.getProfileConfig().getConfiguration().set(profile.getUuid().toString() + ".emeralds", profile.getEmeralds());
             plugin.getProfileConfig().save();
         }
     }
@@ -91,7 +96,7 @@ public class ProfileManager {
 
     }
     public boolean loginBefore(UUID uuid) {
-        if (plugin.getMongoManager().isEnabled()) {
+        if (plugin.isMongoEnabled()) {
             return database.getCollection("fastbuilder_profiles").find(Filters.eq("uuid", uuid.toString())).first() != null;
         }else {
             if (plugin.getProfileConfig() == null || plugin.getProfileConfig().getConfiguration() == null) {
@@ -106,6 +111,7 @@ public class ProfileManager {
         profile.setBlockType(Material.valueOf(document.getString("blockType")));
         profile.setPickaxeType(Material.valueOf(document.getString("pickaxeType")));
         profile.setPb(document.getLong("pb"));
+        profile.setEmeralds(document.getInteger("emeralds"));
     }
 }
 

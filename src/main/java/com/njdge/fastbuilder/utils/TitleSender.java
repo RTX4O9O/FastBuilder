@@ -1,5 +1,6 @@
 package com.njdge.fastbuilder.utils;
 
+import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import org.bukkit.ChatColor;
@@ -11,12 +12,7 @@ import org.bukkit.entity.Player;
 public class TitleSender {
 
     public static void sendTitle(Player player, String text, PacketPlayOutTitle.EnumTitleAction titleAction, int fadeInTime, int showTime, int fadeOutTime) {
-        IChatBaseComponent chatTitle = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + CC.translate(text) + "\",color:" + ChatColor.GOLD.name().toLowerCase() + "}");
-
-        PacketPlayOutTitle title = new PacketPlayOutTitle(titleAction, chatTitle);
-        PacketPlayOutTitle length = new PacketPlayOutTitle(fadeInTime, showTime, fadeOutTime);
-
+        PacketPlayOutTitle title = new PacketPlayOutTitle(titleAction, new ChatComponentText(text), fadeInTime, showTime, fadeOutTime);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(title);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(length);
     }
 }

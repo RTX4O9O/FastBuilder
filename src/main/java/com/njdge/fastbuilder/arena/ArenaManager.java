@@ -3,10 +3,7 @@ package com.njdge.fastbuilder.arena;
 import com.njdge.fastbuilder.FastBuilder;
 import com.njdge.fastbuilder.arena.impl.Island;
 import com.njdge.fastbuilder.profile.PlayerProfile;
-import jdk.nashorn.internal.ir.Block;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 

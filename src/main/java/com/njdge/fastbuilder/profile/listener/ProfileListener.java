@@ -4,10 +4,14 @@ import com.njdge.fastbuilder.FastBuilder;
 import com.njdge.fastbuilder.arena.Arena;
 import com.njdge.fastbuilder.arena.impl.Island;
 import com.njdge.fastbuilder.profile.PlayerProfile;
+import com.njdge.fastbuilder.profile.ProfileManager;
 import com.njdge.fastbuilder.profile.ProfileState;
 import com.njdge.fastbuilder.utils.CC;
+import com.njdge.fastbuilder.utils.ItemBuilder;
 import com.njdge.fastbuilder.utils.TitleSender;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +23,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
 import java.util.UUID;
 
 import static com.njdge.fastbuilder.utils.ActionBar.sendActionBar;
@@ -76,6 +82,15 @@ public class ProfileListener implements Listener {
             //death height
             if (player.getLocation().getY() < arena.getDeathHeight()) {
                 player.teleport(island.getSpawn());
+                int blockZ = profile.getPlacedBlocks().stream().max(Comparator.comparingInt(Location::getBlockZ)).orElse(null).getBlockZ();
+                int emeralds = (int) Math.floor((blockZ - 3) / 10.0);
+
+                if (emeralds > 0) {
+                    TitleSender.sendTitle(player, " ", PacketPlayOutTitle.EnumTitleAction.TITLE, 1, 20, 1);
+                    TitleSender.sendTitle(player, CC.GREEN + CC.BOLD + " + " + CC.WHITE + CC.BOLD + emeralds + " " + CC.DARK_GREEN + CC.BOLD + "Em" + CC.GREEN + CC.BOLD + "er" + CC.DARK_GREEN + CC.BOLD + "al" + CC.GREEN + CC.BOLD + "ds", PacketPlayOutTitle.EnumTitleAction.SUBTITLE, 1, 20, 1);
+                }
+
+                profile.addEmerald(emeralds);
                 profile.clearBlocks();
                 profile.reset();
                 profile.giveItems();
@@ -87,6 +102,7 @@ public class ProfileListener implements Listener {
             if (!island.getCuboid().isIn(player.getLocation())) {
                 player.teleport(island.getSpawn());
                 profile.clearBlocks();
+
                 profile.reset();
                 profile.giveItems();
                 profile.stopTimer();
@@ -101,7 +117,7 @@ public class ProfileListener implements Listener {
                 Long pb = profile.getPb();
                 Long arenaTime = arena.getPlayers().get(player);
                 String timeString = profile.getTimeString();
-                int emeralds = 16;
+                int emeralds;
                 boolean isPb = false;
 
 
@@ -125,6 +141,20 @@ public class ProfileListener implements Listener {
                     }
                 }
 
+                switch (arena.getType()) {
+                    case NORMAL:
+                        emeralds = 10;
+                        break;
+                    case SHORT:
+                        emeralds = 4;
+                        break;
+                    case EXTRA_SHORT:
+                        emeralds = 2;
+                        break;
+                    default:
+                        emeralds = 0;
+                }
+
                 player.sendMessage(CC.translate("&8&l▬&7&l▬▬▬&8&l▬&7&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬&8&l▬&7&l▬▬▬&7&l▬&8&l▬"));
                 player.sendMessage("");
                 player.sendMessage(CC.translate("       &f&lFastBuilder"));
@@ -141,9 +171,10 @@ public class ProfileListener implements Listener {
                 player.sendMessage("");
                 player.sendMessage(CC.translate("&8&l▬&7&l▬&8&l▬▬&7&l▬▬▬▬&8&l▬▬&7&l▬&8&l▬▬▬▬▬▬&7&l▬&8&l▬&7&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬&8&l▬&7&l▬&8&l▬▬▬▬▬&7&l▬&8&l▬▬&7&l▬▬▬▬&8&l▬▬&7&l▬&8&l▬"));
                 player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 1);
-                TitleSender.sendTitle(player, CC.GREEN + "Time" + CC.GRAY + ":" + CC.YELLOW + timeString, PacketPlayOutTitle.EnumTitleAction.TITLE, 1, 20, 1);
-                TitleSender.sendTitle(player, CC.GREEN + CC.BOLD + "+" + CC.WHITE + CC.BOLD + emeralds + CC.DARK_GREEN + CC.BOLD + "Em" + CC.GREEN + CC.BOLD + "er" + CC.DARK_GREEN + CC.BOLD + "al" + CC.GREEN + CC.BOLD + "ds", PacketPlayOutTitle.EnumTitleAction.SUBTITLE, 1, 20, 1);
 
+                TitleSender.sendTitle(player, CC.GREEN + "Time" + CC.GRAY + ":" + CC.YELLOW + timeString, PacketPlayOutTitle.EnumTitleAction.TITLE, 1, 20, 1);
+                TitleSender.sendTitle(player, CC.GREEN + CC.BOLD + " + " + CC.WHITE + CC.BOLD + emeralds + " " + CC.DARK_GREEN + CC.BOLD + "Em" + CC.GREEN + CC.BOLD + "er" + CC.DARK_GREEN + CC.BOLD + "al" + CC.GREEN + CC.BOLD + "ds", PacketPlayOutTitle.EnumTitleAction.SUBTITLE, 1, 20, 1);
+                profile.addEmerald(emeralds);
 
                 runLater(() -> {
                     player.teleport(island.getSpawn());
@@ -263,5 +294,21 @@ public class ProfileListener implements Listener {
         UUID uuid = player.getUniqueId();
         plugin.getArenaManager().leave(player);
         plugin.getProfileManager().logout(uuid);
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        PlayerProfile profile = FastBuilder.getInstance().getProfileManager().get(player.getUniqueId());
+        ItemStack item = event.getItem();
+        if (item == null) {
+            return;
+        }
+        if (event.getAction().name().startsWith("RIGHT") && ItemBuilder.hasNBTTag(item, "command")) {
+
+            String command = ItemBuilder.getNBTTagValue(item, "command");
+            player.performCommand(command);
+            event.setCancelled(true);
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.njdge.fastbuilder.arena.ArenaManager;
 import com.njdge.fastbuilder.database.MongoManager;
 import com.njdge.fastbuilder.profile.ProfileManager;
 import com.njdge.fastbuilder.profile.command.EditCommand;
+import com.njdge.fastbuilder.profile.command.ShopCommand;
 import com.njdge.fastbuilder.profile.listener.ProfileListener;
 import com.njdge.fastbuilder.utils.BasicConfigFile;
 import com.njdge.fastbuilder.utils.assemble.Assemble;
@@ -30,6 +31,7 @@ public final class FastBuilder extends JavaPlugin {
     private MongoManager mongoManager;
     private BasicConfigFile profileConfig;
     private BasicConfigFile configFile;
+    private boolean mongoEnabled;
 
     @Override
     public void onEnable() {
@@ -49,6 +51,7 @@ public final class FastBuilder extends JavaPlugin {
 
     void loadManagers() {
         this.mongoManager = new MongoManager(this);
+        this.mongoEnabled = getConfig().getBoolean("mongo.enabled");
         this.arenaManager = new ArenaManager(this);
         this.profileManager = new ProfileManager(this);
         this.weatherManager = new WeatherManager(this);
@@ -66,6 +69,7 @@ public final class FastBuilder extends JavaPlugin {
 
     void loadCommand() {
         new EditCommand(this);
+        new ShopCommand(this);
     }
 
     public void loadScoreboard() {

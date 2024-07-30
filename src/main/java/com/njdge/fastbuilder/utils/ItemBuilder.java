@@ -2,6 +2,7 @@ package com.njdge.fastbuilder.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.njdge.fastbuilder.utils.menu.Button;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.NBTTagString;
 import org.bukkit.ChatColor;
@@ -9,7 +10,9 @@ import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -216,5 +219,44 @@ public class ItemBuilder implements Listener {
     public ItemStack build() {
         return is;
     }
+
+    public Button asButton(ButtonClick clickAction) {
+        return new Button() {
+            @Override
+            public ItemStack getButtonItem(Player player) {
+                return build();
+            }
+
+            @Override
+            public void clicked(Player player, int slot, ClickType clickType, int hotbarSlot) {
+                clickAction.clicked(player, slot, clickType, hotbarSlot);
+            }
+        };
+    }
+
+    public interface ButtonClick {
+        void clicked(Player player, int slot, ClickType clickType, int hotbarSlot);
+    }
+
+    public static boolean hasNBTTag(ItemStack itemStack, String key) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
+        NBTTagCompound compound = nmsItem.getTag();
+
+        return compound != null && compound.hasKey(key);
+    }
+    public static String getNBTTagValue(ItemStack itemStack, String key) {
+        if (itemStack == null) {
+            return null;
+        }
+        net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
+        NBTTagCompound compound = nmsItem.getTag();
+
+        if (compound != null && compound.hasKey(key)) {
+            return compound.getString(key);
+        }
+
+        return null;
+    }
+
 
 }
