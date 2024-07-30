@@ -110,3 +110,12 @@ buildNumber.properties
 
 # Common working directory
 run/
+
+#Minecraft content
+server/logs
+server/plugins/FastBuilder
+server/whitelist.json
+server/usercache.json
+server/ops.json
+server/banned-players.json
+server/banned-ips.json
