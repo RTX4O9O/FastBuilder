@@ -1,9 +1,11 @@
 package com.njdge.fastbuilder.profile;
 
 import com.njdge.fastbuilder.arena.Arena;
+import com.njdge.fastbuilder.profile.listener.ProfileListener;
 import com.njdge.fastbuilder.utils.PlayerUtils;
 import lombok.Data;
 import org.bson.Document;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -46,8 +48,12 @@ public class PlayerProfile {
 
     public void clearBlocks() {
         if (placedBlocks.isEmpty()) return;
+        //player.setGameMode(GameMode.ADVENTURE);
         sequential(this);
         placedBlocks.clear();
+
+        //ProfileListener.sendBack(this);
+
     }
 
     public void reset() {
