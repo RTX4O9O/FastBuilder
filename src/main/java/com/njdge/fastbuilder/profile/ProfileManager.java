@@ -54,7 +54,7 @@ public class ProfileManager {
         profile.setPickaxeType(Material.WOOD_PICKAXE);
         profile.setPb(null);
         profile.setEmeralds(0);
-        database.getCollection("fastbuilder_profiles").insertOne(new Document(profile.toDoc()));
+        if (plugin.isMongoEnabled()) database.getCollection("fastbuilder_profiles").insertOne(new Document(profile.toDoc()));
     }
 
     public void load(PlayerProfile profile) {
