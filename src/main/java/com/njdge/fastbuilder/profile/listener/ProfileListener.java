@@ -1,6 +1,7 @@
 package com.njdge.fastbuilder.profile.listener;
 
 import com.njdge.fastbuilder.FastBuilder;
+import com.njdge.fastbuilder.FastBuilderItems;
 import com.njdge.fastbuilder.arena.Arena;
 import com.njdge.fastbuilder.arena.impl.Island;
 import com.njdge.fastbuilder.profile.PlayerProfile;
@@ -12,6 +13,7 @@ import com.njdge.fastbuilder.utils.TitleSender;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,12 +25,15 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Comparator;
 import java.util.UUID;
 
 import static com.njdge.fastbuilder.utils.ActionBar.sendActionBar;
+import static com.njdge.fastbuilder.utils.Tasks.getScheduler;
 import static com.njdge.fastbuilder.utils.Tasks.runLater;
 import static com.njdge.fastbuilder.utils.Util.*;
 
@@ -197,6 +202,14 @@ public class ProfileListener implements Listener {
         profile.setBlocks(profile.getBlocks() + 1);
 
         if (profile.getState().equals(ProfileState.PLAYING)) {
+
+            PlayerInventory inv = e.getPlayer().getInventory();
+            if ((inv.getItem(0) == null && inv.getHeldItemSlot() == 1)) {
+                inv.setItem(0, FastBuilderItems.block.build());
+            } else if (inv.getItem(1) == null && inv.getHeldItemSlot() == 0) {
+                inv.setItem(1, FastBuilderItems.block.build());
+            }
+
             if (!island.getPlaceableCuboid().isIn(e.getBlock().getLocation())) {
                 e.setCancelled(true);
                 sendActionBar(player, CC.RED + "You can't place blocks here");
@@ -224,6 +237,11 @@ public class ProfileListener implements Listener {
             } else {
                 profile.getPlacedBlocks().remove(e.getBlock().getLocation());
                 profile.setBlocks(profile.getBlocks() - 1);
+
+
+                Location location = e.getBlock().getLocation();
+                e.setCancelled(true);
+                location.getBlock().setType(Material.AIR);
             }
         } else if (profile.getState().equals(ProfileState.EDITING)) {
             e.setCancelled(false);
@@ -241,7 +259,7 @@ public class ProfileListener implements Listener {
         }
     }
 
-    @EventHandler
+/*    @EventHandler
     public void onPickup(PlayerPickupItemEvent e) {
         Player player = e.getPlayer();
         PlayerProfile profile = plugin.getProfileManager().getProfiles().get(player.getUniqueId());
@@ -250,7 +268,7 @@ public class ProfileListener implements Listener {
         } else if (profile.getState().equals(ProfileState.EDITING)) {
             e.setCancelled(false);
         }
-    }
+    }*/
 
     @EventHandler
     public void onMobSpawn(CreatureSpawnEvent e) {
