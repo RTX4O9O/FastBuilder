@@ -112,13 +112,15 @@ buildNumber.properties
 run/
 
 #Minecraft content
-server/logs
-server/plugins/FastBuilder
-server/whitelist.json
-server/usercache.json
-server/ops.json
-server/banned-players.json
-server/banned-ips.json
-server/world
-server/world_nether
-server/world_the_end
+/server/logs
+/server/plugins/FastBuilder
+/server/whitelist.json
+/server/usercache.json
+/server/ops.json
+/server/banned-players.json
+/server/banned-ips.json
+/server/world
+/server/world_nether
+/server/world_the_end
+
+
